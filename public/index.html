@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda DAWE</title>
+  <!-- Favicon -->
+  <link rel="icon" href="imagenes/favicon.ico" type="image/x-icon">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-white">
+  <!-- Offcanvas carrito de la compra -->
+  <div class="offcanvas offcanvas-end rounded" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasCartLabel">Carrito de la compra</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <!-- Se establece un max-height y overflow-y: auto para que sea scroleable -->
+    <div class="offcanvas-body" style="max-height: 60vh; overflow-y: auto;">
+      <!-- Contenido del carrito -->
+      <div id="carritoContent">
+        <p class="text-center">No hay productos en el carrito.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Contenedor principal -->
+  <div class="container-fluid p-0 content-wrapper">
+    <!-- Cabecera -->
+    <header class="bg-primary text-white text-center py-3 rounded-bottom">
+      <h1>TIENDA</h1>
+    </header>
+    <!-- Menú de navegación -->
+    <nav class="bg-light py-2 rounded">
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link active rounded" href="#">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link rounded" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" href="#">Carrito</a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Contenido principal -->
+    <div class="row m-0 rounded">
+      <!-- Aside: formulario para nuevos productos -->
+      <aside class="col-md-4 p-3 border-end rounded bg-white">
+        <h3 class="mb-3">Añadir Producto</h3>
+        <form id="formProducto" class="rounded p-3 border">
+          <!-- Seleccionar tipo de producto -->
+          <div class="mb-3">
+            <label for="tipoProducto" class="form-label">Tipo de producto</label>
+            <select class="form-select rounded" id="tipoProducto" required>
+              <option value="">Escoge un tipo</option>
+              <option value="videojuego">Videojuego</option>
+              <option value="libro">Libro</option>
+              <option value="ropa">Ropa</option>
+              <option value="electronica">Electrónica</option>
+              <option value="juguete">Juguete</option>
+            </select>
+          </div>
+          <!-- Nombre del producto -->
+          <div class="mb-3">
+            <label for="nombreProducto" class="form-label">Nombre del producto</label>
+            <input type="text" class="form-control rounded" id="nombreProducto" placeholder="Nombre del producto" required>
+          </div>
+          <!-- Precio del producto -->
+          <div class="mb-3">
+            <label for="precioProducto" class="form-label">Precio</label>
+            <input type="number" class="form-control rounded" id="precioProducto" placeholder="Precio" required min="0">
+          </div>
+          <!-- Descripción del producto -->
+          <div class="mb-3">
+            <label for="descripcionProducto" class="form-label">Descripción</label>
+            <textarea class="form-control rounded" id="descripcionProducto" rows="3" placeholder="Descripción del producto"></textarea>
+          </div>
+          <!-- Campo extra que se muestra dinámicamente -->
+          <div class="mb-3 d-none" id="campoExtra">
+            <label for="campoExtraInput" class="form-label">Campo extra</label>
+            <input type="text" class="form-control rounded" id="campoExtraInput" placeholder="Información adicional">
+          </div>
+          <!-- Subir imagen del producto (campo de archivo) -->
+          <div class="mb-3">
+            <label for="imagenProducto" class="form-label">Imagen del producto</label>
+            <input type="file" class="form-control rounded" id="imagenProducto" accept="image/png, image/jpeg">
+          </div>
+          <!-- Campo drag & drop para la imagen -->
+          <div class="mb-3">
+            <label class="form-label">O arrastra y suelta la imagen aquí</label>
+            <div id="dropZone" class="border p-3 text-center rounded">Arrastra la imagen</div>
+          </div>
+          <!-- Botón para subir el formulario -->
+          <button type="submit" class="btn btn-success rounded">Subir Producto</button>
+        </form>
+      </aside>      
+      <!-- Main: listado de productos y buscador -->
+      <main class="col-md-8 p-3 rounded">
+        <!-- Contenedor con fondo blanco para el encabezado de la lista -->
+        <div class="bg-white p-2 rounded mb-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 id="tituloProductos">Todos los productos</h2>
+            <div class="d-flex align-items-center">
+              <input type="search" class="form-control rounded me-2" id="buscador" placeholder="Buscar producto">
+              <button id="btnAjustes" class="btn btn-outline-secondary">Ajustes</button>
+            </div>
+          </div>
+          <!-- Panel de ajustes (filtros de precio y valoración)-->
+          <div id="filtroAjustes" class="bg-light p-3 rounded mt-2 d-none">
+            <div class="mb-3">
+              <label>Precio: <span id="precioMinVal">0</span>€ - <span id="precioMaxVal">1000</span>€</label>
+              <div class="dual-slider-container">
+                <input type="range" id="precioMin" class="form-range dual-range" min="0" max="1000" step="1" value="0">
+                <input type="range" id="precioMax" class="form-range dual-range" min="0" max="1000" step="1" value="1000">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label>Valoración: <span id="valoracionMinVal">1</span>★ - <span id="valoracionMaxVal">5</span>★</label>
+              <div class="dual-slider-container">
+                <input type="range" id="valoracionMin" class="form-range dual-range" min="1" max="5" step="1" value="1">
+                <input type="range" id="valoracionMax" class="form-range dual-range" min="1" max="5" step="1" value="5">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Sección de productos -->
+        <div id="productos" class="row g-3 mt-3 bg-white p-3 rounded">
+          <p class="text-center">Aquí se mostrarán los productos.</p>
+        </div>
+        <!-- Información de paginación -->
+        <div class="text-center">
+            <div id="paginacion-info" class="bg-white p-2 rounded d-inline-block"></div>
+          </div>
+        <!-- Menú de paginación -->
+        <nav aria-label="Paginación de productos">
+          <ul class="pagination justify-content-center mt-4" id="paginacion">
+            <!-- Botones de paginación, se generarán dinámicamente -->
+          </ul>
+        </nav>
+      </main>
+    </div>
+  </div>
+  <!-- Pie de página -->
+  <footer class="bg-secondary text-white text-center py-2 fixed-bottom rounded-top">
+    <p class="mb-0">&copy; 2025 Tienda DAWE</p>
+  </footer>
+  
+  <!-- Bootstrap JS y Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts personalizados -->
+  <script src="js/utils.js"></script>
+  <script src="js/clases.js"></script>
+  <script src="js/tienda.js"></script>
+  <!-- Actualización del título según la búsqueda -->
+  <script>
+    const buscador = document.getElementById('buscador');
+    const tituloProductos = document.getElementById('tituloProductos');
+
+    buscador.addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+      if (query === "") {
+        tituloProductos.textContent = "Todos los productos";
+      } else {
+        tituloProductos.textContent = "Buscando por: " + query;
+      }
+      if (typeof filtrarProductos === 'function') {
+        filtrarProductos(query);
+      }
+    });
+  </script>
+</body>
+</html>
